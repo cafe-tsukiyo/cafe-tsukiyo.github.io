@@ -958,7 +958,22 @@
                     {menuItems.map((item, i) => (
                       <li key={item.id} className={`menu-item-row ${enchantedId === item.id || sweepingId === item.id ? 'active' : ''}`} onMouseEnter={() => handleMouseEnter(item)} style={{ marginBottom: `${globalStyle.itemSpacing * 16}px` }}>
                         <span className="menu-item-number">{String(i + 1).padStart(2, '0')}</span>
-                        <a href={item.link} className={`menu-item-link ${sweepingId === item.id ? 'sweeping' : ''} ${enchantedId === item.id ? 'enchanted' : ''}`} target="_blank" rel="noopener noreferrer" onAnimationEnd={() => handleSweepEnd(item)} style={{ fontSize: `${globalStyle.itemSize * 16}px` }}>{item.label}</a>
+                        <a 
+                          href={item.link} 
+                          className={`menu-item-link ${sweepingId === item.id ? 'sweeping' : ''} ${enchantedId === item.id ? 'enchanted' : ''}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          onClick={(e) => {
+                            if (selectedItemId !== item.id) {
+                              e.preventDefault();
+                              handleMouseEnter(item);
+                            }
+                          }}
+                          onAnimationEnd={() => handleSweepEnd(item)} 
+                          style={{ fontSize: `${globalStyle.itemSize * 16}px` }}
+                        >
+                          {item.label}
+                        </a>
                       </li>
                     ))}
                   </ul>
