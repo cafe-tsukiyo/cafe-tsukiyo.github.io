@@ -956,7 +956,16 @@
                 <nav className="menu-nav">
                   <ul className="menu-list-items">
                     {menuItems.map((item, i) => (
-                      <li key={item.id} className={`menu-item-row ${enchantedId === item.id || sweepingId === item.id ? 'active' : ''}`} onMouseEnter={() => handleMouseEnter(item)} style={{ marginBottom: `${globalStyle.itemSpacing * 16}px` }}>
+                      <li 
+                        key={item.id} 
+                        className={`menu-item-row ${enchantedId === item.id || sweepingId === item.id ? 'active' : ''}`} 
+                        onMouseEnter={() => {
+                          if (window.matchMedia('(hover: hover)').matches) {
+                            handleMouseEnter(item);
+                          }
+                        }} 
+                        style={{ marginBottom: `${globalStyle.itemSpacing * 16}px` }}
+                      >
                         <span className="menu-item-number">{String(i + 1).padStart(2, '0')}</span>
                         <a 
                           href={item.link} 
