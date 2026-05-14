@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>喫茶月夜宮 - 魔導書メニュー</title>
+  <meta name="description" content="喫茶月夜宮 — マルチクリエイターの作品と世界観を紹介するポートフォリオサイト" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Nanum+Myeongjo:wght@400;700&family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet" />
+
+  <!-- React & ReactDOM (Production) -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Open Graph / SNS -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="喫茶月夜宮 - 魔導書メニュー" />
+  <meta property="og:description" content="喫茶月夜宮 — マルチクリエイターの作品と世界観を紹介するポートフォリオサイト" />
+  <meta property="og:image" content="画像/喫茶月夜宮　看板.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <style>
+    /* ═══════════════════════════════════════════════
+       @property — Enchant Sweep angle
+       ═══════════════════════════════════════════════ */
+    @property --sweep-pos {
+      syntax: '<percentage>';
+      initial-value: 0%;
+      inherits: false;
+    }
+
+    @property --sweep-opacity {
+      syntax: '<number>';
+      initial-value: 0;
+      inherits: false;
+    }
+
+    /* ═══════════════════════════════════════════════
+       Design Tokens — Enchant Inks
+       ═══════════════════════════════════════════════ */
+    :root {
+      /* Copper Enchant Ink */
+      --copper-light: #ffaa89;
+      --copper-dark:  #6a222c;
+      --copper-glow:  rgba(255, 74, 74, 0.25);
+
+      /* Gold Enchant Ink */
+      --gold-light: #ffffff;
+      --gold-dark:  #ecb800;
+      --gold-glow:  rgba(255, 226, 148, 0.25);
+
+      /* Legacy aliases */
+      --theme-base:   #ffa082;
+      --theme-active: #ecb800;
+
+      /* Typography */
+      --font-serif-en: 'Cinzel', serif;
+      --font-serif-ja: 'Nanum Myeongjo', 'Shippori Mincho', serif;
+
+      /* Timing — BPM 116 */
+      --pulse-beat: 0.517s;
+    }
+
+    /* ═══════════════════════════════════════════════
+       Global Reset
+       ═══════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: radial-gradient(ellipse at 50% 20%, #2d0a1a 0%, #0d0008 70%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif-ja);
+      color: var(--copper-light);
+      overflow: hidden;
+    }
+
+    /* ═══════════════════════════════════════════════
+       Keyframes — Glow Pulse (BPM 116)
+       ═══════════════════════════════════════════════ */
+    @keyframes copper-glow-pulse {
+      0%   { filter: drop-shadow(0 0 4px rgba(255, 74, 74, 0.15)); }
+      100% { filter: drop-shadow(0 0 12px rgba(255, 74, 74, 0.4)); }
+    }
+
+    @keyframes gold-glow-pulse {
+      0%   { filter: drop-shadow(0 0 4px rgba(255, 226, 148, 0.15)); }
+      100% { filter: drop-shadow(0 0 14px rgba(255, 226, 148, 0.45)); }
+    }
+
+    /* ═══════════════════════════════════════════════
+       Keyframes — Enchant Sweep (bottom to up with fade-in)
+       ═══════════════════════════════════════════════ */
+    @keyframes enchant-sweep {
+      0% { 
+        --sweep-pos: 0%; 
+        --sweep-opacity: 0;
+      }
+      100% { 
+        --sweep-pos: 100%; 
+        --sweep-opacity: 1;
+      }
+    }
+
+    /* ═══════════════════════════════════════════════
+       Keyframes — General
+       ═══════════════════════════════════════════════ */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes flicker {
+      0%, 100% { filter: drop-shadow(0 0 10px rgba(236,184,0,0.6)) drop-shadow(0 0 30px rgba(255,100,0,0.2)); }
+      50%      { filter: drop-shadow(0 0 5px  rgba(236,184,0,0.3)) drop-shadow(0 0 15px rgba(255,100,0,0.1)); }
+    }
+
+    /* ═══════════════════════════════════════════════
+       Enchant Ink Utility Classes
+       ═══════════════════════════════════════════════ */
+
+    /* Copper gradient text — default */
+    .enchant-copper {
+      background: linear-gradient(to bottom, var(--copper-light), var(--copper-dark));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: copper-glow-pulse var(--pulse-beat) ease-in-out infinite alternate;
+    }
+
+    /* Gold gradient text — active / hover */
+    .enchant-gold {
+      background: linear-gradient(to bottom, var(--gold-light), var(--gold-dark));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gold-glow-pulse var(--pulse-beat) ease-in-out infinite alternate;
+    }
+
+    /* ═══════════════════════════════════════════════
+       Editor Styles (Dev Only)
+       ═══════════════════════════════════════════════ */
+    .dev-editor-panel {
+      position: fixed;
+      width: 320px;
+      background: rgba(20, 20, 25, 0.95);
+      border: 1px solid var(--copper-dark);
+      border-radius: 8px;
+      color: #e0e0e0;
+      padding: 1.5rem;
+      z-index: 10000;
+      font-family: 'Shippori Mincho', serif;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 10px var(--copper-dark);
+      backdrop-filter: blur(10px);
+      user-select: none; /* Prevent text selection during drag */
+    }
+
+    .editor-title {
+      font-family: 'Cinzel', serif;
+      color: var(--copper-light);
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+      border-bottom: 1px solid #444;
+      padding-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: move; /* Indicate draggability */
+    }
+
+    .editor-field {
+      margin-bottom: 1.2rem;
+    }
+
+    .editor-label {
+      display: block;
+      font-size: 0.85rem;
+      color: #aaa;
+      margin-bottom: 0.4rem;
+    }
+
+    .editor-input {
+      width: 100%;
+      background: #333;
+      border: 1px solid #555;
+      color: white;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+
+    .editor-input:focus {
+      border-color: var(--gold-dark);
+      outline: none;
+    }
+
+    .editor-btn {
+      width: 100%;
+      padding: 0.6rem;
+      background: var(--copper-dark);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      transition: all 0.3s ease;
+      margin-top: 0.5rem;
+    }
+
+    .editor-btn:hover {
+      background: var(--copper-light);
+    }
+
+    .editor-export-btn {
+      background: #2b5e2b;
+    }
+
+    .editor-export-btn:hover {
+      background: #3a7a3a;
+    }
+
+    .editor-hint {
+      font-size: 0.75rem;
+      color: #888;
+      margin-top: 1rem;
+      font-style: italic;
+    }
+
+    .editor-scroll-area {
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    .editor-scroll-area::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .editor-scroll-area::-webkit-scrollbar-thumb {
+      background: #555;
+      border-radius: 2px;
+    }
+
+    /* Sweep state — light races top to down through text (mystical blur) */
+    .enchant-sweeping {
+      background:
+        linear-gradient(
+          to top,
+          transparent 0%,
+          transparent calc(var(--sweep-pos) - 40%),
+          rgba(255, 226, 148, calc(var(--sweep-opacity) * 0.4)) calc(var(--sweep-pos) - 20%),
+          rgba(255, 255, 255, calc(var(--sweep-opacity) * 0.8)) var(--sweep-pos),
+          rgba(255, 226, 148, calc(var(--sweep-opacity) * 0.4)) calc(var(--sweep-pos) + 20%),
+          transparent calc(var(--sweep-pos) + 40%),
+          transparent 100%
+        ),
+        linear-gradient(to bottom, var(--copper-light), var(--copper-dark));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: enchant-sweep 0.35s ease-out forwards;
+      filter: drop-shadow(0 0 10px rgba(255, 226, 148, calc(var(--sweep-opacity) * 0.6)));
+    }
+
+    /* ═══════════════════════════════════════════════
+       Landing Screen
+       ═══════════════════════════════════════════════ */
+    .landing {
+      text-align: center;
+      animation: fadeInUp 1.2s ease both;
+    }
+
+    .candle-icon {
+      display: block;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      animation: flicker 3s ease-in-out infinite alternate;
+    }
+
+    .landing-subtitle {
+      font-family: var(--font-serif-en);
+      font-size: 0.85rem;
+      letter-spacing: 0.3em;
+      color: rgba(255, 160, 130, 0.5);
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+    }
+
+    .landing-title {
+      font-family: var(--font-serif-ja);
+      font-size: 2.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+
+    .landing-en {
+      font-family: var(--font-serif-en);
+      font-size: 1rem;
+      letter-spacing: 0.2em;
+      margin-bottom: 3.5rem;
+      opacity: 0.6;
+    }
+
+    .open-menu-btn {
+      font-family: var(--font-serif-en);
+      font-size: 1rem;
+      letter-spacing: 0.25em;
+      background: none;
+      border: 1px solid rgba(236, 184, 0, 0.4);
+      padding: 1rem 3rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      color: transparent;
+      background-image: linear-gradient(to bottom, var(--gold-light), var(--gold-dark));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gold-glow-pulse var(--pulse-beat) ease-in-out infinite alternate;
+    }
+
+    .open-menu-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(236, 184, 0, 0.05);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+
+    .open-menu-btn:hover::before { transform: scaleX(1); }
+    .open-menu-btn:hover {
+      border-color: rgba(236, 184, 0, 0.8);
+      box-shadow: 0 0 20px rgba(236, 184, 0, 0.15);
+    }
+
+    /* ═══════════════════════════════════════════════
+       Grimoire Overlay
+       ═══════════════════════════════════════════════ */
+    .grimoire-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 5, 8, 0.92);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 3000;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .menu-book-container {
+      container-type: inline-size;
+      /* Responsive Frame: maintains aspect ratio and fits screen */
+      width: min(90vw, calc(85vh * 8824 / 6071));
+      max-width: 980px;
+      aspect-ratio: 8824 / 6071;
+      height: auto;
+      position: relative;
+      margin: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* ── Book Spread (Design Canvas) ── */
+    .book-spread {
+      width: 980px;
+      height: 674px; /* 980 * 6071 / 8824 */
+      position: absolute;
+      top: 0;
+      left: 0;
+      
+      transform-origin: top left;
+
+      background: transparent url('https://res.cloudinary.com/dbpod41zb/image/upload/q_auto/f_auto/v1778751244/%E3%83%A1%E3%83%8B%E3%83%A5%E3%83%BC%E8%A1%A8_%E5%A4%9C_icbz5l.webp') no-repeat center;
+      background-size: 100% 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding: 60px 70px;
+      gap: 0;
+      box-shadow: 0 0 60px rgba(0,0,0,0.8);
+      border-radius: 3px;
+      box-sizing: border-box;
+    }
+
+    .book-spread::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 42px;    /* Aligns with the visual top of the parchment */
+      height: 590px; /* Aligns with the visual bottom of the parchment */
+      width: 2px;
+      background: linear-gradient(to bottom,
+        transparent,
+        rgba(184, 115, 51, 0.2) 15%,
+        rgba(184, 115, 51, 0.2) 85%,
+        transparent);
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .book-close-btn {
+      position: absolute;
+      top: -60px;
+      right: 0;
+      background: none;
+      border: none;
+      font-size: 48px;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s, transform 0.2s;
+      line-height: 1;
+      color: transparent;
+      background-image: linear-gradient(to bottom, var(--copper-light), var(--copper-dark));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      z-index: 10;
+    }
+
+    .book-page {
+      display: flex;
+      flex-direction: column;
+      padding: 24px 48px;
+    }
+
+    .left-page {
+      position: relative;
+    }
+
+    /* ── Left Page: Menu List ── */
+    .page-header {
+      margin-bottom: 72px;
+      text-align: center;
+    }
+    .menu-title-main {
+      font-family: var(--font-serif-en);
+      font-size: 26px;
+      letter-spacing: 0.15em;
+    }
+
+    .menu-nav {
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .menu-list-items {
+      list-style: none;
+      padding: 0;
+      width: 100%;
+    }
+
+    .menu-item-row {
+      margin-bottom: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .menu-item-number {
+      display: none;
+    }
+
+    .menu-item-row.active .menu-item-number,
+    .menu-item-row:hover .menu-item-number {
+      color: rgba(236, 184, 0, 0.6);
+    }
+
+    /* ── Menu Item Link — Enchant Ink treatment ── */
+    .menu-item-link {
+      font-family: var(--font-serif-ja);
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0;
+      text-decoration: none;
+      display: inline-block;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.35s ease;
+      background: linear-gradient(to bottom, var(--copper-light), var(--copper-dark));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: copper-glow-pulse var(--pulse-beat) ease-in-out infinite alternate;
+      opacity: 1;
+    }
+
+    .menu-item-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 50%;
+      width: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+      transition: width 0.45s ease, left 0.45s ease;
+    }
+
+    .menu-item-link.sweeping {
+      opacity: 1;
+      background:
+        linear-gradient(to bottom, 
+          var(--gold-light) 0%, 
+          var(--gold-dark) var(--sweep-pos), 
+          var(--copper-light) var(--sweep-pos), 
+          var(--copper-dark) 100%
+        );
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: enchant-sweep 0.35s ease-out forwards;
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 10px rgba(255, 226, 148, calc(var(--sweep-opacity) * 0.6)));
+    }
+
+    .menu-item-link.enchanted {
+      opacity: 1;
+      background: linear-gradient(to bottom, var(--gold-light), var(--gold-dark));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gold-glow-pulse var(--pulse-beat) ease-in-out infinite alternate;
+      transform: scale(1.05);
+    }
+
+    .menu-item-row.active .menu-item-link::after,
+    .menu-item-row:hover .menu-item-link::after {
+      width: 100%;
+      left: 0;
+    }
+
+    /* ── Page Footer ── */
+    .page-footer {
+      display: none;
+    }
+
+    /* ── Right Page ── */
+    .right-page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 3rem;
+    }
+
+    .logo-area {
+      margin-bottom: 32px;
+      text-align: center;
+    }
+    .menu-logo-text {
+      font-family: var(--font-serif-ja);
+      font-size: 16px;
+      letter-spacing: 0.4em;
+      line-height: 2;
+    }
+    .menu-logo-en {
+      font-family: var(--font-serif-en);
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: rgba(236, 184, 0, 0.3);
+    }
+
+    .visual-preview-area {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+    }
+    .preview-frame {
+      width: 100%;
+      height: 300px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(184, 115, 51, 0.3);
+      box-shadow:
+        0 0 30px rgba(0,0,0,0.5),
+        inset 0 0 40px rgba(10,5,8,0.5);
+    }
+
+    .preview-frame::before,
+    .preview-frame::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-color: rgba(236, 184, 0, 0.4);
+      border-style: solid;
+      z-index: 2;
+    }
+    .preview-frame::before { top: 6px; left: 6px; border-width: 1px 0 0 1px; }
+    .preview-frame::after  { bottom: 6px; right: 6px; border-width: 0 1px 1px 0; }
+
+    .preview-img-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: 
+        opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+        filter 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+
+    .preview-caption {
+      font-family: var(--font-serif-ja);
+      font-size: 0.8rem;
+      letter-spacing: 0.25em;
+      min-height: 1.2em;
+      transition: color 0.3s, opacity 0.4s;
+      opacity: 0.5;
+    }
+
+    /* ── Editor Interactions ── */
+    .preview-frame.dev-editable {
+      cursor: move;
+      outline: 2px dashed rgba(236, 184, 0, 0);
+      transition: outline 0.3s ease;
+    }
+    .preview-frame.dev-editable:hover {
+      outline: 2px dashed rgba(236, 184, 0, 0.5);
+    }
+    .preview-frame.dev-editable.drag-over {
+      background: rgba(236, 184, 0, 0.1);
+      outline: 2px dashed rgba(236, 184, 0, 1);
+    }
+    .preview-img-layer.dragging {
+      cursor: grabbing !important;
+      transition: none !important; /* Disable transition during drag for smoothness */
+    }
+    .editor-pan-hint {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      font-size: 0.65rem;
+      background: rgba(0,0,0,0.6);
+      padding: 2px 8px;
+      border-radius: 4px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .preview-frame:hover .editor-pan-hint {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useCallback, useRef } = React;
+
+    /* ═══════════════════════════════════════════════
+       Design Editor Configurations (Security Seal)
+       ═══════════════════════════════════════════════ */
+    const ENABLE_EDITOR = false; // Set to false for production
+    const urlParams = new URLSearchParams(window.location.search);
+    const IS_DEV_MODE = ENABLE_EDITOR && urlParams.get('edit') === 'true';
+
+    const INITIAL_CONFIG = [
+      { id: "menu_about", label: "喫茶・月夜宮について", previewImage: "https://res.cloudinary.com/dbpod41zb/image/upload/q_auto/f_auto/v1778749473/%E5%96%AB%E8%8C%B6%E6%9C%88%E5%A4%9C%E5%AE%AE_%E7%9C%8B%E6%9D%BF_w5rehd.png", link: "/about", cropPosition: "43% 51%" },
+      { id: "menu_gallery", label: "イラストギャラリー", previewImage: "https://res.cloudinary.com/dbpod41zb/image/upload/q_auto/f_auto/v1778749474/%E3%83%A2%E3%83%81%E3%83%BC%E3%83%95_%E3%82%A4%E3%83%A9%E3%82%B9%E3%83%88%E7%B4%B9%E4%BB%8Bs_p9lnfp.png", link: "https://foriio.com/Cafe-Tsukiyo", cropPosition: "24% 39%" },
+      { id: "menu_music", label: "喫茶音楽", previewImage: "https://res.cloudinary.com/dbpod41zb/image/upload/q_auto/f_auto/v1778749472/%E3%83%97%E3%83%AC%E3%82%A4%E3%83%AA%E3%82%B9%E3%83%88_xf99fs.png", link: "https://www.youtube.com/channel/UC5F7stuAv0Wmg7oglewSE5Q", cropPosition: "center" },
+      { id: "menu_shop", label: "喫茶店の雑貨屋", previewImage: "https://res.cloudinary.com/dbpod41zb/image/upload/q_auto/f_auto/v1778749473/%E4%B9%99%E5%A5%B3%E6%A4%BF2_vawvtp.png", link: "https://atelier-ygg.booth.pm/", cropPosition: "4% 82%" },
+      { id: "menu_order", label: "ご注文サイトへ", previewImage: "https://res.cloudinary.com/dbpod41zb/image/upload/q_auto/f_auto/v1778749473/SD%E3%82%AD%E3%83%A3%E3%83%83%E3%83%81%EF%BC%92_oumz6r.png", link: "https://tsunagu.cloud/users/Cafe_Tsukiyo", cropPosition: "45% 56%" }
+    ];
+
+    /* ═══════════════════════════════════════
+       Custom Hook: Moon Fade (image crossfade)
+       ═══════════════════════════════════════ */
+    const useMoonFade = (initialSrc) => {
+      const [layers, setLayers] = useState([
+        { src: initialSrc, opacity: 1 },
+        { src: '', opacity: 0 }
+      ]);
+      const [activeIndex, setActiveIndex] = useState(0);
+      const [isTransitioning, setIsTransitioning] = useState(false);
+
+      const transitionTo = useCallback((newSrc) => {
+        if (!newSrc || newSrc === layers[activeIndex].src || isTransitioning) return;
+        const nextIndex = 1 - activeIndex;
+        setIsTransitioning(true);
+        setLayers(prev => {
+          const nextL = [...prev];
+          nextL[nextIndex] = { src: newSrc, opacity: 0 };
+          return nextL;
+        });
+        setTimeout(() => {
+          setLayers(prev => {
+            const nextL = [...prev];
+            nextL[nextIndex].opacity = 1;
+            nextL[activeIndex].opacity = 0;
+            return nextL;
+          });
+        }, 30);
+        setTimeout(() => {
+          setActiveIndex(nextIndex);
+          setIsTransitioning(false);
+        }, 440);
+      }, [activeIndex, layers, isTransitioning]);
+
+      return { layers, activeIndex, transitionTo };
+    };
+
+    /* ── GrimoireMenu Component ── */
+    const GrimoireMenu = ({ isOpen, onClose, menuItems, globalStyle, onUpdate, onUpdateGlobal }) => {
+      const [selectedItemId, setSelectedItemId] = useState(null);
+      const [sweepingId, setSweepingId] = useState(null);
+      const [enchantedId, setEnchantedId] = useState(null);
+      const [isDragging, setIsDragging] = useState(false);
+      const [isDragOver, setIsDragOver] = useState(false);
+      const [bookScale, setBookScale] = useState(1);
+      const [editorPos, setEditorPos] = useState({ x: 40, y: 40 });
+      const [isDraggingEditor, setIsDraggingEditor] = useState(false);
+      const [statusMsg, setStatusMsg] = useState("");
+      const [exportText, setExportText] = useState("");
+      
+      const selectedItem = menuItems.find(item => item.id === selectedItemId);
+      const { layers, activeIndex, transitionTo } = useMoonFade(selectedItem?.previewImage || '');
+      const frameRef = useRef(null);
+      const containerRef = useRef(null);
+      const dragStart = useRef({ x: 0, y: 0, pos: '' });
+      const editorDragStart = useRef({ x: 0, y: 0, initialX: 0, initialY: 0 });
+
+      // Handle perfect scaling
+      useEffect(() => {
+        if (!isOpen || !containerRef.current) return;
+        
+        const updateScale = () => {
+          const container = containerRef.current;
+          if (container) {
+            const scale = container.offsetWidth / 980;
+            setBookScale(scale);
+          }
+        };
+
+        const observer = new ResizeObserver(updateScale);
+        observer.observe(containerRef.current);
+        updateScale(); // Initial call
+        
+        return () => observer.disconnect();
+      }, [isOpen]);
+
+      // --- Drag to Position Logic ---
+      const handleMouseDown = (e) => {
+        if (!IS_DEV_MODE || !selectedItem) return;
+        setIsDragging(true);
+        const currentPos = selectedItem.cropPosition || "50% 50%";
+        dragStart.current = { x: e.clientX, y: e.clientY, pos: currentPos };
+        e.preventDefault();
+      };
+
+      const handleUpdateItem = (id, updates) => {
+        const newItems = menuItems.map(item => item.id === id ? { ...item, ...updates } : item);
+        onUpdate(newItems);
+      };
+
+      const handleMouseMove = useCallback((e) => {
+        if (!isDragging || !selectedItem) return;
+        
+        const rect = frameRef.current.getBoundingClientRect();
+        const deltaX = e.clientX - dragStart.current.x;
+        const deltaY = e.clientY - dragStart.current.y;
+
+        let [startPX, startPY] = dragStart.current.pos.split(' ').map(v => parseInt(v) || 50);
+
+        const moveX = (deltaX / rect.width) * 100;
+        const moveY = (deltaY / rect.height) * 100;
+
+        const newPX = Math.max(0, Math.min(100, startPX - moveX));
+        const newPY = Math.max(0, Math.min(100, startPY - moveY));
+
+        handleUpdateItem(selectedItem.id, { cropPosition: `${Math.round(newPX)}% ${Math.round(newPY)}%` });
+      }, [isDragging, selectedItem]);
+
+      const handleMouseUp = () => {
+        setIsDragging(false);
+        // Temporary feedback that an unsaved change exists
+      };
+
+      useEffect(() => {
+        if (isDragging) {
+          window.addEventListener('mousemove', handleMouseMove);
+          window.addEventListener('mouseup', handleMouseUp);
+        } else if (isDraggingEditor) {
+          window.addEventListener('mousemove', handleEditorMouseMove);
+          window.addEventListener('mouseup', handleEditorMouseUp);
+        } else {
+          window.removeEventListener('mousemove', handleMouseMove);
+          window.removeEventListener('mouseup', handleMouseUp);
+          window.removeEventListener('mousemove', handleEditorMouseMove);
+          window.removeEventListener('mouseup', handleEditorMouseUp);
+        }
+        return () => {
+          window.removeEventListener('mousemove', handleMouseMove);
+          window.removeEventListener('mouseup', handleMouseUp);
+          window.removeEventListener('mousemove', handleEditorMouseMove);
+          window.removeEventListener('mouseup', handleEditorMouseUp);
+        };
+      }, [isDragging, isDraggingEditor, handleMouseMove]);
+
+      // --- Editor Drag Logic ---
+      const handleEditorMouseDown = (e) => {
+        if (!IS_DEV_MODE) return;
+        setIsDraggingEditor(true);
+        editorDragStart.current = { 
+          x: e.clientX, 
+          y: e.clientY, 
+          initialX: editorPos.x, 
+          initialY: editorPos.y 
+        };
+        e.stopPropagation();
+      };
+
+      const handleEditorMouseMove = useCallback((e) => {
+        if (!isDraggingEditor) return;
+        const deltaX = e.clientX - editorDragStart.current.x;
+        const deltaY = e.clientY - editorDragStart.current.y;
+        setEditorPos({
+          x: editorDragStart.current.initialX + deltaX,
+          y: editorDragStart.current.initialY + deltaY
+        });
+      }, [isDraggingEditor]);
+
+      const handleEditorMouseUp = () => {
+        setIsDraggingEditor(false);
+        console.log("Editor drag end");
+      };
+
+      // --- Drag and Drop File Logic ---
+      const handleDrop = (e) => {
+        e.preventDefault();
+        setIsDragOver(false);
+        if (!IS_DEV_MODE) return;
+
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const result = event.target.result;
+            handleUpdateItem(selectedItem.id, { previewImage: result });
+            transitionTo(result);
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+
+      const handleDragOver = (e) => {
+        e.preventDefault();
+        if (IS_DEV_MODE) setIsDragOver(true);
+      };
+
+      const handleDragLeave = () => setIsDragOver(false);
+
+      // --- Menu Handlers ---
+      const handleMouseEnter = (item) => {
+        setSelectedItemId(item.id);
+        transitionTo(item.previewImage);
+        if (enchantedId !== item.id) {
+          setSweepingId(item.id);
+          setEnchantedId(null);
+        }
+      };
+
+      const handleSweepEnd = (item) => {
+        if (sweepingId === item.id) {
+          setSweepingId(null);
+          setEnchantedId(item.id);
+        }
+      };
+
+      const handleSaveToBrowser = () => {
+        console.log("Saving to Browser Storage...");
+        setStatusMsg("Saving...");
+        try {
+          const configStr = JSON.stringify(menuItems);
+          const styleStr = JSON.stringify(globalStyle);
+          localStorage.setItem('tsukiyomiya_config', configStr);
+          localStorage.setItem('tsukiyomiya_style', styleStr);
+          setStatusMsg("✅ Saved to Browser!");
+          console.log("Save successful. Size:", (configStr.length + styleStr.length) / 1024, "KB");
+        } catch (e) {
+          console.error("Storage error:", e);
+          setStatusMsg("❌ Error: Storage Full!");
+          alert("Failed to save: Storage is full! Use Export instead.");
+        }
+      };
+
+      const handleClearStorage = () => {
+        console.log("Clearing storage...");
+        if (confirm("Reset all browser-saved changes?")) {
+          localStorage.removeItem('tsukiyomiya_config');
+          localStorage.removeItem('tsukiyomiya_style');
+          window.location.reload();
+        }
+      };
+
+      const handleExport = () => {
+        console.log("Generating JSON for export...");
+        const fullConfig = {
+          items: menuItems,
+          globalStyle: globalStyle
+        };
+        const json = JSON.stringify(fullConfig, null, 2);
+        
+        // Create Blob and Download
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `tsukiyomiya_config_${new Date().getTime()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        setStatusMsg("✅ Config File Downloaded!");
+      };
+
+      if (!isOpen) return null;
+
+      return (
+        <div className="grimoire-overlay" onClick={onClose}>
+          <div className="menu-book-container" ref={containerRef} onClick={e => e.stopPropagation()}>
+            <div className="book-spread" style={{ transform: `scale(${bookScale})` }}>
+              <button className="book-close-btn" onClick={onClose}>✕</button>
+                <div className="book-page left-page">
+                <header className="page-header" style={{ marginBottom: `${globalStyle.headerSpacing * 16}px` }}>
+                  <h1 className="menu-title-main enchant-copper" style={{ fontSize: `${globalStyle.titleSize * 16}px` }}>Menu</h1>
+                </header>
+                <nav className="menu-nav">
+                  <ul className="menu-list-items">
+                    {menuItems.map((item, i) => (
+                      <li key={item.id} className={`menu-item-row ${enchantedId === item.id || sweepingId === item.id ? 'active' : ''}`} onMouseEnter={() => handleMouseEnter(item)} style={{ marginBottom: `${globalStyle.itemSpacing * 16}px` }}>
+                        <span className="menu-item-number">{String(i + 1).padStart(2, '0')}</span>
+                        <a href={item.link} className={`menu-item-link ${sweepingId === item.id ? 'sweeping' : ''} ${enchantedId === item.id ? 'enchanted' : ''}`} target="_blank" rel="noopener noreferrer" onAnimationEnd={() => handleSweepEnd(item)} style={{ fontSize: `${globalStyle.itemSize * 16}px` }}>{item.label}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+                <footer className="page-footer">
+                </footer>
+              </div>
+              <div className="book-page right-page">
+                <div className="logo-area">
+                  <p className="menu-logo-text enchant-gold">喫茶月夜宮</p>
+                  <p className="menu-logo-en enchant-gold" style={{ opacity: 0.8 }}>Kissa Tsukiyomiya</p>
+                </div>
+                <div className="visual-preview-area">
+                  <div 
+                    ref={frameRef}
+                    className={`preview-frame ${IS_DEV_MODE ? 'dev-editable' : ''} ${isDragOver ? 'drag-over' : ''}`}
+                    onMouseDown={handleMouseDown}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                  >
+                    {layers.map((layer, i) => (
+                      layer.src && (
+                        <img 
+                          key={i} 
+                          src={layer.src} 
+                          alt="" 
+                          className={`preview-img-layer ${isDragging && i === activeIndex ? 'dragging' : ''}`} 
+                          style={{ 
+                            opacity: layer.opacity, 
+                            zIndex: i === activeIndex ? 2 : 1, 
+                            objectPosition: menuItems.find(it => it.previewImage === layer.src)?.cropPosition || '50% 50%',
+                            filter: `brightness(${0.6 + layer.opacity * 0.4}) blur(${(1 - layer.opacity) * 4}px)`
+                          }} 
+                        />
+                      )
+                    ))}
+                    {IS_DEV_MODE && (
+                      <div className="editor-pan-hint">
+                        Drag to move / Drop image to replace
+                      </div>
+                    )}
+                  </div>
+                  <p className="preview-caption enchant-gold" style={{ marginTop: '1.5rem', minHeight: '1.5em' }}>{selectedItem ? `— ${selectedItem.label}` : ''}</p>
+                </div>
+                {IS_DEV_MODE && selectedItem && (
+                  <div className="dev-editor-panel" style={{ left: `${editorPos.x}px`, top: `${editorPos.y}px`, bottom: 'auto' }}>
+                    <h3 className="editor-title" onMouseDown={handleEditorMouseDown}><span>Design Editor</span></h3>
+                    <div className="editor-scroll-area">
+                      <div className="editor-section-title" style={{color: 'var(--gold-dark)', fontSize: '0.7rem', textTransform: 'uppercase', marginBottom: '0.8rem', borderBottom: '1px solid #333'}}>Global Layout</div>
+                      <div className="editor-field">
+                        <label className="editor-label">Title Size ({globalStyle.titleSize}rem)</label>
+                        <input type="range" min="0.8" max="4" step="0.1" value={globalStyle.titleSize} onChange={(e) => onUpdateGlobal({ titleSize: parseFloat(e.target.value) })} style={{width:'100%'}} />
+                      </div>
+                      <div className="editor-field">
+                        <label className="editor-label">Title Spacing ({globalStyle.headerSpacing}rem)</label>
+                        <input type="range" min="0" max="10" step="0.2" value={globalStyle.headerSpacing} onChange={(e) => onUpdateGlobal({ headerSpacing: parseFloat(e.target.value) })} style={{width:'100%'}} />
+                      </div>
+                      <div className="editor-field">
+                        <label className="editor-label">Item Size ({globalStyle.itemSize}rem)</label>
+                        <input type="range" min="0.5" max="3" step="0.05" value={globalStyle.itemSize} onChange={(e) => onUpdateGlobal({ itemSize: parseFloat(e.target.value) })} style={{width:'100%'}} />
+                      </div>
+                      <div className="editor-field">
+                        <label className="editor-label">Item Spacing ({globalStyle.itemSpacing}rem)</label>
+                        <input type="range" min="0" max="8" step="0.1" value={globalStyle.itemSpacing} onChange={(e) => onUpdateGlobal({ itemSpacing: parseFloat(e.target.value) })} style={{width:'100%'}} />
+                      </div>
+
+                      <div className="editor-section-title" style={{color: 'var(--gold-dark)', fontSize: '0.7rem', textTransform: 'uppercase', margin: '1.2rem 0 0.8rem', borderBottom: '1px solid #333'}}>Selected Item</div>
+                      <div className="editor-field"><label className="editor-label">Label</label><input className="editor-input" value={selectedItem.label} onChange={(e) => handleUpdateItem(selectedItem.id, { label: e.target.value })} /></div>
+                      <div className="editor-field"><label className="editor-label">Link</label><input className="editor-input" value={selectedItem.link} onChange={(e) => handleUpdateItem(selectedItem.id, { link: e.target.value })} /></div>
+                      <div className="editor-field">
+                        <label className="editor-label">Image Path</label>
+                        <input className="editor-input" type="text" value={selectedItem.previewImage || ''} onChange={(e) => {
+                          handleUpdateItem(selectedItem.id, { previewImage: e.target.value });
+                          transitionTo(e.target.value);
+                        }} placeholder="e.g. 画像/photo.jpg" />
+                      </div>
+                      <div className="editor-field">
+                        <label className="editor-label">Crop ({selectedItem.cropPosition || '50% 50%'})</label>
+                        <input className="editor-input" type="text" value={selectedItem.cropPosition || ''} onChange={(e) => handleUpdateItem(selectedItem.id, { cropPosition: e.target.value })} />
+                      </div>
+                    </div>
+                    <div className="editor-actions" style={{marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                      <div className="status-badge" style={{fontSize: '0.7rem', color: 'var(--gold-light)', textAlign: 'center', minHeight: '1em'}}>{statusMsg}</div>
+                      <button className="editor-btn" style={{background: '#2b4e5e'}} onClick={handleSaveToBrowser}>Save to Browser</button>
+                      <button className="editor-btn editor-export-btn" style={{background: '#2e5e2e'}} onClick={handleExport}>Download Config (.json)</button>
+                      
+                      <button className="editor-btn" style={{background: '#442222', fontSize: '0.7rem', marginTop: '0.5rem'}} onClick={handleClearStorage}>Reset Storage</button>
+                      <div style={{fontSize: '0.6rem', color: '#555', textAlign: 'center', marginTop: '4px'}}>
+                        Current Size: {(JSON.stringify(menuItems).length / 1024 / 1024).toFixed(2)} MB / 5MB
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const App = () => {
+      const [isOpen, setIsOpen] = useState(false);
+      const [menuItems, setMenuItems] = useState(INITIAL_CONFIG);
+      const [globalStyle, setGlobalStyle] = useState({
+        titleSize: 1.6,
+        headerSpacing: 3,
+        itemSize: 1.5,
+        itemSpacing: 4
+      });
+
+      useEffect(() => {
+        if (IS_DEV_MODE) {
+          const savedItems = localStorage.getItem('tsukiyomiya_config');
+          const savedStyle = localStorage.getItem('tsukiyomiya_style');
+          if (savedItems) {
+            try { setMenuItems(JSON.parse(savedItems)); } catch(e) {}
+          }
+          if (savedStyle) {
+            try { setGlobalStyle(JSON.parse(savedStyle)); } catch(e) {}
+          }
+        }
+      }, []);
+
+      const updateConfig = (newData) => {
+        setMenuItems(newData);
+        // Manual save only to avoid QuotaExceededError during dragging
+      };
+
+      const updateGlobalStyle = (updates) => {
+        const nextStyle = { ...globalStyle, ...updates };
+        setGlobalStyle(nextStyle);
+        // Manual save only
+      };
+
+      return (
+        <>
+          <div className="landing">
+            <span className="candle-icon">🕯️</span>
+            <p className="landing-subtitle">Multi-Creator Portfolio</p>
+            <h1 className="landing-title enchant-copper">喫茶月夜宮</h1>
+            <p className="landing-en enchant-copper">Kissa Tsukiyomiya</p>
+            <button className="open-menu-btn" onClick={() => setIsOpen(true)}>✦ Open Menu ✦</button>
+          </div>
+          <GrimoireMenu 
+            isOpen={isOpen} 
+            onClose={() => setIsOpen(false)} 
+            menuItems={menuItems} 
+            globalStyle={globalStyle}
+            onUpdate={updateConfig} 
+            onUpdateGlobal={updateGlobalStyle}
+          />
+        </>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
