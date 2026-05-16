@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>☕ SDイラスト見積もり（キャンペーン）</title>
+<style>
+  body {
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    background-color: transparent;
+    font-family: 'YuMincho', 'Hiragino Mincho ProN', serif;
+  }
+  .container {
+    padding: 32px 40px;
+    border: 1px solid #8d6e5b;
+    border-radius: 14px;
+    max-width: 600px;
+    width: 100%;
+    background: #160C0F;
+    box-shadow: 0 3px 12px #2d222844;
+    box-sizing: border-box;
+    position: relative;
+  }
+  .title-area {
+    text-align: center;
+    letter-spacing: 0.08em;
+    color: #e9c48f;
+    border-bottom: 1.5px dashed #a0845f;
+    padding-bottom: 7px;
+    margin-bottom: 13px;
+    font-size: 19px;
+    line-height: 1.3;
+    background: linear-gradient(90deg, #4c2b26 0%, #160C0F 60%);
+    border-radius: 7px 7px 0 0;
+    position: relative;
+  }
+  .options-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 6px;
+    font-size: 14px;
+  }
+  .options-table td {
+    vertical-align: middle;
+  }
+  .opt-checkbox {
+    zoom: 1.25;
+  }
+  .opt-label {
+    cursor: pointer;
+    display: inline-block;
+    width: 100%;
+  }
+  .opt-title {
+    font-weight: bold;
+    color: #e8bc85;
+  }
+  .opt-price {
+    float: right;
+    color: #f9dfb8;
+    font-size: 13px;
+  }
+  .opt-desc {
+    font-size: 11px;
+    color: #c1a067;
+  }
+  .calc-btn {
+    margin-top: 15px;
+    padding: 8px 0;
+    background: linear-gradient(90deg, #5b3b35, #a0845f 90%);
+    color: #f5e8cd;
+    border: none;
+    font-size: 15px;
+    font-family: inherit;
+    letter-spacing: 0.08em;
+    border-radius: 8px;
+    box-shadow: 0 1px 5px #23201566;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    min-height: 32px;
+    transition: opacity 0.2s;
+  }
+  .calc-btn:hover { opacity: 0.9; }
+  .total-box {
+    margin-top: 17px;
+    background: #231512;
+    border: 2px dotted #a0845f;
+    border-radius: 7px;
+    padding: 9px 13px;
+  }
+  .copy-textarea {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 150px;
+    margin-top: 15px;
+    padding: 11px;
+    border: 1px solid #a79376;
+    border-radius: 5px;
+    background: #231512;
+    resize: vertical;
+    font-size: 13px;
+    display: block;
+    line-height: 1.6;
+    color: #ebdcbe;
+  }
+  .copy-btn {
+    margin-top: 8px;
+    padding: 10px 0;
+    background: linear-gradient(90deg, #99805c, #af8b7c);
+    color: #fafaf9;
+    border: none;
+    font-size: 13px;
+    border-radius: 6px;
+    font-family: inherit;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    width: 100%;
+    box-shadow: 0 1px 3px #64463a44;
+    min-height: 26px;
+  }
+  
+  /* Animation CSS */
+  @keyframes pourDrop { 0% { transform: translateY(-18px) scaleY(0.2); opacity:0.1; } 50% { opacity:0.7; } 95% { opacity:1; } 100% { transform: translateY(16px) scaleY(1.2); opacity:0; } }
+  @keyframes fillCoffee { 0% { height:0; } 70% { height:16px; } 100% { height:18px; } }
+  .coffee-pour-cup { width:30px; height:28px; display:inline-block; position:relative; }
+  .coffee-pour-cup .cup { width:28px; height:17px; border:2.4px solid #c7bdb0; border-radius:0 0 13px 13px/0  0 13px 13px; background: #e8e2da; position:absolute; bottom:2px; left:0; box-sizing:border-box; z-index:2; }
+  .coffee-pour-cup .handle { position:absolute; right:-8px; bottom:6px; width:8px; height:13px; border:2.5px solid #c7bdb0; border-left:none; border-radius:0 10px 12px 0; box-sizing:border-box; z-index:3; }
+  .coffee-pour-cup .coffee { position:absolute; left:4.5px; bottom:4.5px; width:19px; height:0; background:linear-gradient(180deg, #553417 50%, #b7905c 100%); border-radius:0 0 9.5px 9.5px / 0 0 9.5px 9.5px; z-index:1; animation: fillCoffee 1s cubic-bezier(0.42,0,0.58,1) forwards; }
+  .coffee-pour-cup .pour { position:absolute; left:12.7px; top:-14px; width:5px; height:25px; display:block; z-index:4; }
+  .coffee-pour-cup .pour-drop { position:absolute; left:1.3px; width:2.7px; height:12px; background:linear-gradient(180deg, #a85938 30%, #36200f 100%); border-radius:1.5px; animation: pourDrop 0.8s cubic-bezier(.2,.6,.65,1) forwards; }
+
+  /* Edit UI CSS */
+  .edit-toggle-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: transparent;
+    border: none;
+    color: #a0845f;
+    cursor: pointer;
+    font-size: 16px;
+    opacity: 0.5;
+    transition: 0.3s;
+  }
+  .edit-toggle-btn:hover { opacity: 1; }
+  
+  .editor-panel {
+    display: none;
+    margin-top: 20px;
+    padding: 15px;
+    background: #1f1411;
+    border: 1px dashed #a0845f;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #e8bc85;
+  }
+  .editor-panel.active { display: block; }
+  .editor-input {
+    width: 100%;
+    background: #2b1d19;
+    border: 1px solid #735941;
+    color: #f9dfb8;
+    padding: 6px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+  .editor-item {
+    background: #160C0F;
+    border: 1px solid #4a3328;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .editor-item-archive {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #4a3328;
+    color: #e8bc85;
+    border: 1px solid #735941;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 11px;
+    padding: 3px 8px;
+    transition: 0.2s;
+  }
+  .editor-item-archive:hover {
+    background: #5c4236;
+  }
+  .add-btn {
+    background: #3e291f;
+    color: #e8bc85;
+    border: 1px dashed #a0845f;
+    padding: 8px;
+    width: 100%;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 15px;
+  }
+  .export-btn {
+    background: linear-gradient(90deg, #2c4a2c, #426b42);
+    color: white;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  .save-status {
+    font-size: 11px;
+    color: #735941;
+    text-align: right;
+    padding: 4px 0;
+    transition: color 0.3s;
+  }
+  .save-status.saved {
+    color: #6a9a6a;
+  }
+  .reset-btn {
+    background: transparent;
+    color: #8d6e5b;
+    border: 1px solid #4a3328;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    font-family: inherit;
+    transition: 0.2s;
+  }
+  .reset-btn:hover {
+    background: #3a1a1a;
+    color: #e8bc85;
+    border-color: #6a222c;
+  }
+
+  /* Modal CSS */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(10, 5, 7, 0.85);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 1000;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.active {
+    opacity: 1; visibility: visible;
+  }
+  .modal-content {
+    background: #160C0F;
+    border: 1px solid #8d6e5b;
+    border-radius: 6px;
+    padding: 30px 40px;
+    width: 100%; max-width: 600px;
+    height: 860px;
+    max-height: 92vh;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.8), inset 0 0 15px rgba(106,34,44,0.2);
+    position: relative;
+    box-sizing: border-box;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .modal-title {
+    color: #6a222c;
+    font-size: 16px; margin: 0 0 5px 0; align-self: flex-start;
+    font-family: 'Cinzel', 'YuMincho', serif;
+  }
+  .modal-title span { color: #ffaa89; }
+  .modal-subtitle {
+    color: #8d6e5b; font-size: 12px; margin: 0 0 15px 0; align-self: flex-start;
+  }
+  .modal-textarea {
+    width: 100%; flex: 1;
+    background: #11080a;
+    border: 1px solid #4a3328;
+    border-radius: 4px;
+    color: #e8bc85;
+    padding: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: none;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+  .modal-textarea:focus {
+    outline: 1px solid #a0845f;
+  }
+
+  /* Enchant Inks CSS */
+  @property --sweep-pos { syntax: '<percentage>'; initial-value: 0%; inherits: false; }
+  @property --sweep-opacity { syntax: '<number>'; initial-value: 0; inherits: false; }
+
+  @keyframes copper-glow-pulse {
+    0%   { filter: drop-shadow(0 0 4px rgba(255, 74, 74, 0.15)); }
+    100% { filter: drop-shadow(0 0 12px rgba(255, 74, 74, 0.35)); }
+  }
+  @keyframes gold-glow-pulse {
+    0%   { filter: drop-shadow(0 0 4px rgba(255, 226, 148, 0.15)); }
+    100% { filter: drop-shadow(0 0 14px rgba(255, 226, 148, 0.4)); }
+  }
+  @keyframes enchant-sweep {
+    0% { --sweep-pos: 0%; --sweep-opacity: 0; }
+    100% { --sweep-pos: 100%; --sweep-opacity: 1; }
+  }
+
+  .enchant-link {
+    margin-top: 35px;
+    margin-bottom: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    font-family: 'Shippori Mincho', 'YuMincho', 'Hiragino Mincho ProN', serif;
+    
+    /* Copper Default */
+    background: linear-gradient(to bottom, #ffaa89, #6a222c);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: copper-glow-pulse 0.517s ease-in-out infinite alternate;
+    position: relative;
+    cursor: pointer;
+  }
+  .enchant-link::after {
+    /* Overlay for Gold Sweep */
+    content: attr(data-text);
+    position: absolute; left: 0; top: 0;
+    width: 100%; height: 100%;
+    
+    background: linear-gradient(to top, 
+      transparent calc(var(--sweep-pos) - 20%), 
+      rgba(255,255,255,var(--sweep-opacity)) var(--sweep-pos), 
+      transparent calc(var(--sweep-pos) + 20%)
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    pointer-events: none;
+  }
+  
+  .enchant-link:hover {
+    background: linear-gradient(to bottom, #ffffff, #ecb800);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gold-glow-pulse 0.517s ease-in-out infinite alternate;
+  }
+  .enchant-link:hover::after {
+    animation: enchant-sweep 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+</style>
+</head>
+<body>
+
+<div class="container" id="app">
+  <div class="title-area">
+    <span id="display-title">☕ SDイラスト<br>見積もりメニュー</span>
+    <button id="editToggleBtn" class="edit-toggle-btn" title="編集モード">⚙️</button>
+  </div>
+  
+  <table class="options-table" id="options-container">
+    <!-- Options injected by JS -->
+  </table>
+
+  <!-- Commercial Use Fee Row -->
+  <div style="margin: 10px 0; padding: 12px; background: #1f1411; border: 1px solid #4a3328; border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+    <label style="cursor: pointer; display: flex; align-items: center; gap: 8px; color: #e8bc85; font-size: 14px; flex: 1;">
+      <input type="checkbox" id="commercialUse" class="opt-checkbox">
+      <span style="font-weight: bold;">商業利用費 (+50%)</span>
+    </label>
+    <span id="commercialHelpBtn" style="cursor: pointer; color: #a0845f; font-size: 18px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border: 1px solid #a0845f; border-radius: 50%; line-height: 1;">?</span>
+  </div>
+
+  <button id="calcBtn" class="calc-btn">☑ 合計を計算</button>
+
+  <div style="font-size:11px; color:#bda884; margin-top:5px; margin-bottom:-8px; text-align:right;">※ボタンが機能しない場合、再読み込みで解決します。</div>
+
+  <div class="total-box">
+    <h3 style="margin:0 0 3px 0; color:#e9c48f; font-size:15px;">合計<span style="font-size:12px; color:#bca275;">（税込み/目安）</span></h3>
+    <div style="font-size:19px; font-weight:bold; color:#f0bd56; min-height:28px;display:flex;align-items:center;justify-content:left;">
+      <span id="coffee-animation-container" style="display:inline-block;width:40px;height:28px;vertical-align:middle;position:relative;"></span>
+      <span id="total" style="margin-left:2px;">0</span>
+      <span style="font-size:13px; color:#c2a26f; margin-left:7px;">円</span>
+    </div>
+    <div style="margin-top:6px; font-size:13px; color:#bda884; display:flex; align-items:center; gap:6px;">
+      <span>📅 納期目安：約</span>
+      <span id="totalDays" style="font-weight:bold; color:#f0bd56; font-size:16px;">0</span>
+      <span>日</span>
+    </div>
+  </div>
+
+  <textarea id="copyText" class="copy-textarea" placeholder="ここにコピペ用の見積もりが表示されます&#10;コピーを押すとクリップボードにお見積内容とテンプレートが挿入され、そのまま編集いただけます☕"></textarea>
+  <button id="copyBtn" class="copy-btn">📋 見積もりをコピー</button>
+
+  <!-- Editor Panel -->
+  <div id="editorPanel" class="editor-panel">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #735941; padding-bottom:5px; margin-bottom:10px;">
+      <h3 style="margin:0;">🛠 メニューエディタ</h3>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <div id="saveStatus" class="save-status"></div>
+        <button id="resetBtn" class="reset-btn" title="HTMLファイルに埋め込まれた初期データに戻します">🔄 初期状態に戻す</button>
+      </div>
+    </div>
+    
+    <label>メニュータイトル（HTML可）</label>
+    <input type="text" id="editTitle" class="editor-input" />
+
+    <label>クリップボード末尾につくテンプレート</label>
+    <textarea id="editTemplate" class="editor-input" style="height:100px; resize:vertical;"></textarea>
+
+    <label>注文サイトURL（空の場合はリンク非表示）</label>
+    <input type="text" id="editOrderUrl" class="editor-input" placeholder="https://..." />
+
+    <div id="editorOptionsContainer"></div>
+    <button id="addOptionBtn" class="add-btn">＋新しいオプションを追加</button>
+
+    <!-- Library Section -->
+    <div style="margin-top: 25px; border-top: 1px dashed #735941; padding-top: 15px;">
+      <h4 style="margin: 0 0 10px 0; color: #bda884;">📦 オプションライブラリ (非表示)</h4>
+      <p style="font-size:11px; color:#8d6e5b; margin-top:0;">アーカイブされたオプションはここに保管され、いつでもメニューに復元できます。</p>
+      <div id="archivedOptionsContainer"></div>
+    </div>
+
+    <div style="background:#3b2416; padding:10px; border-radius:6px; margin-top:20px; text-align:center;">
+      <p style="margin:0 0 10px 0; font-size:12px; color:#f9dfb8;">現在の状態をそのままお客様提示用ファイルとして書き出します。</p>
+      <button id="exportBtn" class="export-btn">💾 この設定でHTMLをエクスポート</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Memo Modal -->
+<div id="memoModal" class="modal-overlay">
+  <div class="modal-content" id="memoModalContent">
+    <div class="modal-title">Message <span>*</span></div>
+    <div class="modal-subtitle">文章の編集にお使いください☕</div>
+    <textarea id="modalMemoText" class="modal-textarea"></textarea>
+    
+    <div style="width: 100%; display: flex; justify-content: flex-end; margin-top: 10px;">
+      <button id="modalCopyBtn" class="copy-btn" style="width: auto; padding: 6px 15px; margin-top: 0; background: linear-gradient(90deg, #5b3b35, #a0845f 90%);">📋 編集内容をコピー</button>
+    </div>
+
+    <a id="orderSiteLink" href="#" target="_blank" class="enchant-link" data-text="ご注文サイトへ">ご注文サイトへ</a>
+  </div>
+</div>
+
+<!-- Commercial Help Modal -->
+<div id="commercialModal" class="modal-overlay">
+  <div class="modal-content" style="height: auto; max-height: 80vh; padding: 30px; display: flex; flex-direction: column; align-items: flex-start;">
+    <div class="modal-title">商業利用の範囲について</div>
+    <div style="color: #ebdcbe; font-size: 14px; line-height: 1.8; margin-top: 15px; width: 100%;">
+      <p style="margin-bottom: 10px;"><strong>Q：商用利用の範囲は？</strong></p>
+      <p>A：収益化済の配信・SNSでのご利用は無料です。<br>
+      広告素材や販売物への利用は要相談としております。</p>
+    </div>
+    <button id="closeCommercialModal" class="copy-btn" style="margin-top: 25px; background: linear-gradient(90deg, #5b3b35, #a0845f 90%);">閉じる</button>
+  </div>
+</div>
+
+<!-- DATA CONFIG -->
+<script id="appData" type="application/json">
+{
+  "isEditorEnabled": false,
+  "title": "☕ SDイラスト見積もり　キャンペーン用",
+  "options": [
+    {
+      "id": "op1",
+      "label": "SDキャラクター本体",
+      "price": 2500,
+      "description": "キャンペーン割り引き適応価格",
+      "type": "checkbox",
+      "unit": "",
+      "days": 5
+    },
+    {
+      "id": "op2",
+      "label": "表情差分",
+      "price": 1000,
+      "description": "各種表情バリエーション追加",
+      "type": "counter",
+      "unit": "＋￥%PRICE%〜/個",
+      "days": 2
+    },
+    {
+      "id": "op3",
+      "label": "箱庭背景あり",
+      "price": 3000,
+      "description": "小物や背景をプラスしたい時",
+      "type": "checkbox",
+      "unit": "",
+      "days": 3
+    }
+  ],
+  "archivedOptions": [],
+  "template": "■ご希望納期：\n\n■用途：\n\n■サイズ：デフォルト縦1500px　横1500px　解像度350dpi\nカスタム(変更がある場合はご記入ください)\n■ファイル形式：（JPG / PNG / 透過PNG）\n\n▶ポーズ指定\n\n▶表情指定\n\n▶モデルキャラクター・衣装の資料\nURL\n▶好きなパワーストーンや宝石(あれば)\n\n▶背景指定(箱庭オプション選択の方)\n\n▶自由記入欄\n",
+  "orderSiteUrl": "https://tsunagu.cloud/products/77042"
+}
+</script>
+
+<script>
+(() => {
+  // --- STORAGE KEY ---
+  const STORAGE_KEY = 'estimateMenuData_' + window.location.pathname;
+
+  // --- LOAD DATA ---
+  let defaultConfig = {};
+  try {
+    const dataText = document.getElementById('appData').textContent;
+    defaultConfig = JSON.parse(dataText);
+  } catch (e) {
+    console.error("Data parse error", e);
+    return;
+  }
+
+  let appConfig = {};
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      appConfig = JSON.parse(saved);
+    } else {
+      appConfig = JSON.parse(JSON.stringify(defaultConfig));
+    }
+  } catch (e) {
+    appConfig = JSON.parse(JSON.stringify(defaultConfig));
+  }
+
+  if (!appConfig.archivedOptions) {
+    appConfig.archivedOptions = [];
+  }
+  if (typeof appConfig.orderSiteUrl === 'undefined') {
+    appConfig.orderSiteUrl = '';
+  }
+
+  // --- DOM ELEMENTS ---
+  const displayTitle = document.getElementById('display-title');
+  const editToggleBtn = document.getElementById('editToggleBtn');
+  const optionsContainer = document.getElementById('options-container');
+  const calcBtn = document.getElementById('calcBtn');
+  const totalEl = document.getElementById('total');
+  const coffeeContainer = document.getElementById('coffee-animation-container');
+  const copyText = document.getElementById('copyText');
+  const copyBtn = document.getElementById('copyBtn');
+  const commercialUseCheck = document.getElementById('commercialUse');
+
+  // Editor Elements
+  const editorPanel = document.getElementById('editorPanel');
+  const editTitle = document.getElementById('editTitle');
+  const editTemplate = document.getElementById('editTemplate');
+  const editOrderUrl = document.getElementById('editOrderUrl');
+  const editorOptionsContainer = document.getElementById('editorOptionsContainer');
+  const archivedOptionsContainer = document.getElementById('archivedOptionsContainer');
+  const addOptionBtn = document.getElementById('addOptionBtn');
+  const exportBtn = document.getElementById('exportBtn');
+  const saveStatusEl = document.getElementById('saveStatus');
+  const resetBtn = document.getElementById('resetBtn');
+
+  // Commercial Help Modal
+  const commercialModal = document.getElementById('commercialModal');
+  const commercialHelpBtn = document.getElementById('commercialHelpBtn');
+  const closeCommercialModal = document.getElementById('closeCommercialModal');
+
+  // State
+  let isEditing = false;
+
+  // Init UI
+  if (!appConfig.isEditorEnabled) {
+    editToggleBtn.style.display = 'none';
+  }
+  
+  function getBtn(e, selector) {
+    return e.target.closest ? e.target.closest(selector) : e.target;
+  }
+
+  function renderView() {
+    displayTitle.innerHTML = appConfig.title;
+    optionsContainer.innerHTML = '';
+
+    appConfig.options.forEach((opt, index) => {
+      const tr = document.createElement('tr');
+      const tdCheck = document.createElement('td');
+      tdCheck.style.width = '32px';
+      tdCheck.style.textAlign = 'center';
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.className = 'opt-checkbox';
+      checkbox.id = 'view_op_' + index;
+      checkbox.dataset.index = index;
+      tdCheck.appendChild(checkbox);
+
+      const tdBody = document.createElement('td');
+      const label = document.createElement('label');
+      label.htmlFor = checkbox.id;
+      label.className = 'opt-label';
+      const titleSpan = document.createElement('span');
+      titleSpan.className = 'opt-title';
+      titleSpan.textContent = opt.label;
+      const priceSpan = document.createElement('span');
+      priceSpan.className = 'opt-price';
+      if (opt.unit) {
+        priceSpan.textContent = opt.unit.replace('%PRICE%', opt.price.toLocaleString());
+      } else {
+        priceSpan.textContent = '￥' + opt.price.toLocaleString() + '〜';
+      }
+      const br = document.createElement('br');
+      const descSpan = document.createElement('span');
+      descSpan.className = 'opt-desc';
+      descSpan.textContent = opt.description;
+      label.appendChild(titleSpan);
+      label.appendChild(priceSpan);
+      label.appendChild(br);
+      label.appendChild(descSpan);
+      tdBody.appendChild(label);
+
+      if (opt.type === 'counter') {
+        const divCount = document.createElement('div');
+        divCount.style.marginTop = '4px';
+        const countLabel = document.createElement('label');
+        countLabel.style.fontSize = '12px';
+        countLabel.style.color = '#c1a067';
+        countLabel.style.marginRight = '4px';
+        countLabel.textContent = '個数：';
+        const countInput = document.createElement('input');
+        countInput.type = 'number';
+        countInput.id = 'view_count_' + index;
+        countInput.min = '1';
+        countInput.value = '1';
+        countInput.style.cssText = 'width:46px; font-size:13px; padding:2px 4px; border-radius:3px; border:1px solid #bfa784; margin-right:6px; background:#21160F; color:#e8bc85;';
+        countInput.disabled = !checkbox.checked;
+        countInput.style.opacity = checkbox.checked ? '1' : '0.55';
+        checkbox.addEventListener('change', () => {
+          countInput.disabled = !checkbox.checked;
+          countInput.style.opacity = checkbox.checked ? '1' : '0.55';
+        });
+        divCount.appendChild(countLabel);
+        divCount.appendChild(countInput);
+        tdBody.appendChild(divCount);
+      }
+      tr.appendChild(tdCheck);
+      tr.appendChild(tdBody);
+      optionsContainer.appendChild(tr);
+    });
+  }
+
+  // --- CALCULATE LOGIC ---
+  function showCoffeeAnimation(cb) {
+    coffeeContainer.innerHTML = '';
+    totalEl.style.opacity = 0.5;
+    const div = document.createElement('div');
+    div.className = 'coffee-pour-cup';
+    div.innerHTML = '<div class="pour"><div class="pour-drop"></div></div><div class="cup"></div><div class="coffee"></div><div class="handle"></div>';
+    coffeeContainer.appendChild(div);
+    setTimeout(() => {
+      coffeeContainer.innerHTML = '';
+      totalEl.style.opacity = 1;
+      cb && cb();
+    }, 1200);
+  }
+
+  calcBtn.addEventListener('click', () => {
+    let total = 0;
+    let selectedText = [];
+
+    appConfig.options.forEach((opt, index) => {
+      const checkbox = document.getElementById('view_op_' + index);
+      if (checkbox && checkbox.checked) {
+        if (opt.type === 'counter') {
+          const countInput = document.getElementById('view_count_' + index);
+          let count = parseInt(countInput.value, 10);
+          if (isNaN(count) || count < 1) count = 1;
+          countInput.value = count;
+          let subtotal = opt.price * count;
+          total += subtotal;
+          selectedText.push(opt.label + ' (' + count + '個)：￥' + subtotal.toLocaleString());
+        } else {
+          total += opt.price;
+          selectedText.push(opt.label + '：￥' + opt.price.toLocaleString());
+        }
+      }
+    });
+
+    // Commercial Use Fee
+    if (commercialUseCheck.checked) {
+      total = Math.ceil(total * 1.5);
+      selectedText.push('商業利用：あり (+50%)');
+    }
+
+    totalEl.textContent = '';
+    showCoffeeAnimation(() => {
+      totalEl.textContent = total.toLocaleString();
+      let totalDays = 0;
+      appConfig.options.forEach((opt, index) => {
+        const cb = document.getElementById('view_op_' + index);
+        if (cb && cb.checked) {
+          const optDays = parseInt(opt.days, 10) || 0;
+          if (opt.type === 'counter') {
+            const ci = document.getElementById('view_count_' + index);
+            let c = parseInt(ci.value, 10);
+            if (isNaN(c) || c < 1) c = 1;
+            totalDays += optDays * c;
+          } else {
+            totalDays += optDays;
+          }
+        }
+      });
+      const daysEl = document.getElementById('totalDays');
+      if (daysEl) daysEl.textContent = totalDays;
+      const text = '◆ご希望内容\n' + (selectedText.length ? selectedText.join('\n') : 'なし') + '\n\n◆見積もり合計\n￥' + total.toLocaleString() + '〜\n\n◆納期目安\n約' + totalDays + '日\n\n※この内容で依頼したいです。';
+      copyText.value = text;
+    });
+  });
+
+  const memoModal = document.getElementById('memoModal');
+  const modalMemoText = document.getElementById('modalMemoText');
+  const orderSiteLink = document.getElementById('orderSiteLink');
+  const modalCopyBtn = document.getElementById('modalCopyBtn');
+
+  copyBtn.addEventListener('click', () => {
+    let originalText = copyText.value;
+    if (!originalText) return;
+    let fullText = originalText + '\n' + appConfig.template;
+    copyText.value = fullText;
+    copyText.select();
+    document.execCommand('copy');
+    modalMemoText.value = fullText;
+    if (appConfig.orderSiteUrl) {
+      orderSiteLink.style.display = 'inline-block';
+      orderSiteLink.href = appConfig.orderSiteUrl;
+    } else {
+      orderSiteLink.style.display = 'none';
+    }
+    memoModal.classList.add('active');
+    copyText.value = originalText;
+  });
+
+  modalCopyBtn.addEventListener('click', () => {
+    modalMemoText.select();
+    document.execCommand('copy');
+    const originalText = modalCopyBtn.textContent;
+    modalCopyBtn.textContent = '✅ コピーしました！';
+    setTimeout(() => { modalCopyBtn.textContent = originalText; }, 2000);
+  });
+
+  orderSiteLink.addEventListener('click', () => {
+    modalMemoText.select();
+    document.execCommand('copy');
+  });
+
+  memoModal.addEventListener('click', (e) => {
+    if (e.target === memoModal) {
+      memoModal.classList.remove('active');
+    }
+  });
+
+  // Commercial Help Modal Logic
+  commercialHelpBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    commercialModal.classList.add('active');
+  });
+  closeCommercialModal.addEventListener('click', () => {
+    commercialModal.classList.remove('active');
+  });
+  commercialModal.addEventListener('click', (e) => {
+    if (e.target === commercialModal) {
+      commercialModal.classList.remove('active');
+    }
+  });
+
+  // --- EDITOR LOGIC ---
+  function renderEditor() {
+    editTitle.value = appConfig.title;
+    editTemplate.value = appConfig.template;
+    editOrderUrl.value = appConfig.orderSiteUrl;
+    editorOptionsContainer.innerHTML = '';
+    appConfig.options.forEach((opt, index) => {
+      const div = document.createElement('div');
+      div.className = 'editor-item';
+      div.innerHTML = `
+        <button class="editor-item-archive" data-index="${index}" title="このオプションをライブラリに移動します">📥 アーカイブ</button>
+        <div style="display:flex; gap:10px; margin-bottom:5px; margin-top:5px;">
+          <div style="flex:2">
+            <label>ラベル</label>
+            <input type="text" class="editor-input opt-edit-label" data-index="${index}" value="${opt.label}">
+          </div>
+          <div style="flex:1">
+            <label>価格</label>
+            <input type="number" class="editor-input opt-edit-price" data-index="${index}" value="${opt.price}">
+          </div>
+          <div style="flex:1">
+            <label>納期(日)</label>
+            <input type="number" class="editor-input opt-edit-days" data-index="${index}" value="${opt.days || 0}" min="0">
+          </div>
+        </div>
+        <div style="margin-bottom:5px;">
+          <label>説明文</label>
+          <input type="text" class="editor-input opt-edit-desc" data-index="${index}" value="${opt.description}">
+        </div>
+        <div style="display:flex; gap:10px;">
+          <div style="flex:1">
+            <label>タイプ</label>
+            <select class="editor-input opt-edit-type" data-index="${index}">
+              <option value="checkbox" ${opt.type === 'checkbox' ? 'selected' : ''}>単一チェック</option>
+              <option value="counter" ${opt.type === 'counter' ? 'selected' : ''}>個数入力あり</option>
+            </select>
+          </div>
+          <div style="flex:1">
+            <label>価格表示(任意 %PRICE%)</label>
+            <input type="text" class="editor-input opt-edit-unit" data-index="${index}" value="${opt.unit || ''}" placeholder="＋￥%PRICE%〜/個">
+          </div>
+        </div>
+      `;
+      editorOptionsContainer.appendChild(div);
+    });
+
+    archivedOptionsContainer.innerHTML = '';
+    if (appConfig.archivedOptions.length === 0) {
+      archivedOptionsContainer.innerHTML = '<div style="color:#735941; font-size:12px; text-align:center; padding:10px;">アーカイブされたオプションはありません</div>';
+    } else {
+      appConfig.archivedOptions.forEach((opt, index) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'background:#160C0F; border:1px solid #4a3328; padding:10px; border-radius:6px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;';
+        div.innerHTML = `
+          <div>
+            <div style="color:#e8bc85; font-weight:bold; font-size:13px;">${opt.label} <span style="color:#f9dfb8; font-size:11px; margin-left:8px;">￥${opt.price.toLocaleString()}</span></div>
+            <div style="color:#c1a067; font-size:10px; margin-top:2px;">${opt.description || '説明なし'}</div>
+          </div>
+          <div style="display:flex; gap:5px;">
+            <button class="lib-restore-btn" data-index="${index}" style="background:#2c4a2c; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;">⬆️ 復元</button>
+            <button class="lib-delete-btn" data-index="${index}" style="background:#6a222c; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;">❌ 削除</button>
+          </div>
+        `;
+        archivedOptionsContainer.appendChild(div);
+      });
+    }
+
+    editorOptionsContainer.querySelectorAll('input, select').forEach(input => {
+      input.addEventListener('input', () => {
+        saveEditorState();
+        renderView();
+      });
+    });
+  }
+
+  editorOptionsContainer.addEventListener('click', (e) => {
+    const archiveBtn = e.target.closest('.editor-item-archive');
+    if (archiveBtn) {
+      syncStateFromDOM();
+      const idx = parseInt(archiveBtn.dataset.index, 10);
+      if (isNaN(idx) || idx < 0 || idx >= appConfig.options.length) return;
+      const opt = appConfig.options.splice(idx, 1)[0];
+      appConfig.archivedOptions.push(opt);
+      persistState();
+      renderEditor();
+      renderView();
+    }
+  });
+
+  archivedOptionsContainer.addEventListener('click', (e) => {
+    const restoreBtn = e.target.closest('.lib-restore-btn');
+    if (restoreBtn) {
+      syncStateFromDOM();
+      const idx = parseInt(restoreBtn.dataset.index, 10);
+      if (isNaN(idx) || idx < 0 || idx >= appConfig.archivedOptions.length) return;
+      const opt = appConfig.archivedOptions.splice(idx, 1)[0];
+      appConfig.options.push(opt);
+      persistState();
+      renderEditor();
+      renderView();
+      return;
+    }
+    const deleteBtn = e.target.closest('.lib-delete-btn');
+    if (deleteBtn) {
+      e.stopPropagation();
+      const idx = parseInt(deleteBtn.dataset.index, 10);
+      if (isNaN(idx) || idx < 0 || idx >= appConfig.archivedOptions.length) return;
+      appConfig.archivedOptions.splice(idx, 1);
+      persistState();
+      renderEditor();
+      return;
+    }
+  });
+
+  function syncStateFromDOM() {
+    appConfig.title = editTitle.value;
+    appConfig.template = editTemplate.value;
+    appConfig.orderSiteUrl = editOrderUrl.value;
+    document.querySelectorAll('.opt-edit-label').forEach(el => {
+      const idx = el.dataset.index;
+      if (appConfig.options[idx]) appConfig.options[idx].label = el.value;
+    });
+    document.querySelectorAll('.opt-edit-price').forEach(el => {
+      const idx = el.dataset.index;
+      if (appConfig.options[idx]) appConfig.options[idx].price = parseInt(el.value, 10) || 0;
+    });
+    document.querySelectorAll('.opt-edit-desc').forEach(el => {
+      const idx = el.dataset.index;
+      if (appConfig.options[idx]) appConfig.options[idx].description = el.value;
+    });
+    document.querySelectorAll('.opt-edit-type').forEach(el => {
+      const idx = el.dataset.index;
+      if (appConfig.options[idx]) appConfig.options[idx].type = el.value;
+    });
+    document.querySelectorAll('.opt-edit-unit').forEach(el => {
+      const idx = el.dataset.index;
+      if (appConfig.options[idx]) appConfig.options[idx].unit = el.value;
+    });
+    document.querySelectorAll('.opt-edit-days').forEach(el => {
+      const idx = el.dataset.index;
+      if (appConfig.options[idx]) appConfig.options[idx].days = parseInt(el.value, 10) || 0;
+    });
+  }
+
+  function persistState() {
+    document.getElementById('appData').textContent = JSON.stringify(appConfig, null, 2);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appConfig));
+      if (saveStatusEl) {
+        saveStatusEl.textContent = '✅ 保存済み';
+        saveStatusEl.classList.add('saved');
+        clearTimeout(saveStatusEl._timer);
+        saveStatusEl._timer = setTimeout(() => {
+          saveStatusEl.textContent = '';
+          saveStatusEl.classList.remove('saved');
+        }, 2000);
+      }
+    } catch (e) {
+      console.warn('localStorage save failed', e);
+    }
+  }
+
+  function saveEditorState() {
+    syncStateFromDOM();
+    persistState();
+  }
+
+  editTitle.addEventListener('input', () => { saveEditorState(); renderView(); });
+  editTemplate.addEventListener('input', () => { saveEditorState(); });
+  editOrderUrl.addEventListener('input', () => { saveEditorState(); });
+
+  addOptionBtn.addEventListener('click', () => {
+    appConfig.options.push({
+      id: "op_" + Date.now(),
+      label: "新しいオプション",
+      price: 1000,
+      description: "オプションの説明",
+      type: "checkbox",
+      unit: "",
+      days: 0
+    });
+    saveEditorState();
+    renderEditor();
+    renderView();
+  });
+
+  editToggleBtn.addEventListener('click', () => {
+    isEditing = !isEditing;
+    if (isEditing) {
+      editorPanel.classList.add('active');
+      renderEditor();
+    } else {
+      editorPanel.classList.remove('active');
+    }
+  });
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      if (!confirm('保存されたデータを消去し、HTMLファイル内の初期データに戻します。\nよろしいですか？')) return;
+      localStorage.removeItem(STORAGE_KEY);
+      appConfig = JSON.parse(JSON.stringify(defaultConfig));
+      if (!appConfig.archivedOptions) appConfig.archivedOptions = [];
+      document.getElementById('appData').textContent = JSON.stringify(appConfig, null, 2);
+      renderView();
+      if (isEditing) renderEditor();
+      if (saveStatusEl) {
+        saveStatusEl.textContent = '🔄 初期状態に復元しました';
+        saveStatusEl.classList.remove('saved');
+      }
+    });
+  }
+
+  exportBtn.addEventListener('click', () => {
+    const exportConfig = JSON.parse(JSON.stringify(appConfig));
+    exportConfig.isEditorEnabled = false;
+    const htmlContent = document.documentElement.outerHTML;
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlContent, 'text/html');
+    const panel = doc.getElementById('editorPanel');
+    if (panel) panel.classList.remove('active');
+    const dataScript = doc.getElementById('appData');
+    if (dataScript) {
+      dataScript.textContent = JSON.stringify(exportConfig, null, 2);
+    }
+    const finalHtml = "<!DOCTYPE html>\n<html lang=\"ja\">\n" + doc.documentElement.innerHTML + "\n</html>";
+    const blob = new Blob([finalHtml], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'estimate_menu_' + Date.now() + '.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  renderView();
+})();
+</script>
+</body>
+</html>
