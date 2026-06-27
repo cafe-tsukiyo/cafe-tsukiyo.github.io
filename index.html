@@ -282,73 +282,59 @@
     .landing {
       text-align: center;
       animation: fadeInUp 1.2s ease both;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
-    .candle-icon {
-      display: block;
-      font-size: 2rem;
-      margin-bottom: 2rem;
-      animation: flicker 3s ease-in-out infinite alternate;
+    .landing-card-container {
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
 
-    .landing-subtitle {
-      font-family: var(--font-serif-en);
-      font-size: 0.85rem;
-      letter-spacing: 0.3em;
-      color: rgba(255, 160, 130, 0.5);
-      margin-bottom: 2rem;
-      text-transform: uppercase;
+    .landing-card {
+      width: min(80vw, 320px);
+      height: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(236, 184, 0, 0.2);
+      box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.7),
+        0 0 20px rgba(255, 74, 74, 0.05);
+      transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
 
-    .landing-title {
-      font-family: var(--font-serif-ja);
-      font-size: 2.8rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      margin-bottom: 0.5rem;
+    .landing-card-container:hover .landing-card {
+      transform: translateY(-8px) scale(1.02);
+      border-color: rgba(236, 184, 0, 0.6);
+      box-shadow: 
+        0 25px 45px rgba(0, 0, 0, 0.8),
+        0 0 30px rgba(236, 184, 0, 0.35);
     }
 
-    .landing-en {
-      font-family: var(--font-serif-en);
-      font-size: 1rem;
-      letter-spacing: 0.2em;
-      margin-bottom: 3.5rem;
-      opacity: 0.6;
-    }
-
-    .open-menu-btn {
+    .landing-card-hint {
       font-family: var(--font-serif-en);
       font-size: 1rem;
       letter-spacing: 0.25em;
-      background: none;
-      border: 1px solid rgba(236, 184, 0, 0.4);
-      padding: 1rem 3rem;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.4s ease;
-      color: transparent;
-      background-image: linear-gradient(to bottom, var(--gold-light), var(--gold-dark));
+      transition: all 0.3s ease;
+      background: linear-gradient(to bottom, var(--copper-light), var(--copper-dark));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: copper-glow-pulse var(--pulse-beat) ease-in-out infinite alternate;
+    }
+
+    .landing-card-container:hover .landing-card-hint {
+      background: linear-gradient(to bottom, var(--gold-light), var(--gold-dark));
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
       animation: gold-glow-pulse var(--pulse-beat) ease-in-out infinite alternate;
-    }
-
-    .open-menu-btn::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(236, 184, 0, 0.05);
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.4s ease;
-    }
-
-    .open-menu-btn:hover::before { transform: scaleX(1); }
-    .open-menu-btn:hover {
-      border-color: rgba(236, 184, 0, 0.8);
-      box-shadow: 0 0 20px rgba(236, 184, 0, 0.15);
+      text-shadow: 0 0 10px rgba(236, 184, 0, 0.3);
     }
 
     /* ═══════════════════════════════════════════════
@@ -1121,12 +1107,15 @@
 
       return (
         <>
-          <div className="landing">
-            <span className="candle-icon">🕯️</span>
-            <p className="landing-subtitle">Multi-Creator Portfolio</p>
-            <h1 className="landing-title enchant-copper">喫茶月夜宮</h1>
-            <p className="landing-en enchant-copper">Kissa Tsukiyomiya</p>
-            <button className="open-menu-btn" onClick={() => setIsOpen(true)}>✦ Open Menu ✦</button>
+          <div className="landing" onClick={() => setIsOpen(true)}>
+            <div className="landing-card-container">
+              <img 
+                src="https://res.cloudinary.com/dbpod41zb/image/upload/v1782577268/%E5%96%AB%E8%8C%B6%E6%9C%88%E5%A4%9C%E5%AE%AE_%E3%82%AB%E3%83%BC%E3%83%89%E7%94%A8_qruxu7.webp" 
+                alt="喫茶月夜宮 表紙" 
+                className="landing-card"
+              />
+              <div className="landing-card-hint">✦ Open Menu ✦</div>
+            </div>
           </div>
           <GrimoireMenu 
             isOpen={isOpen} 
