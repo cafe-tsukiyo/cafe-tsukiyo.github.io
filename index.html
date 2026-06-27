@@ -337,6 +337,19 @@
       text-shadow: 0 0 10px rgba(236, 184, 0, 0.3);
     }
 
+    /* PC Screen Optimization for card size and layout spacing */
+    @media (min-width: 769px) {
+      .landing-card {
+        width: min(85vw, calc(72vh * 2 / 3), 480px);
+      }
+      .landing-card-container {
+        gap: 2.2rem;
+      }
+      .landing-card-hint {
+        font-size: 1.15rem;
+      }
+    }
+
     /* ═══════════════════════════════════════════════
        Grimoire Overlay
        ═══════════════════════════════════════════════ */
